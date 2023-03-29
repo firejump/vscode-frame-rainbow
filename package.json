@@ -1,10 +1,10 @@
 {
-    "name": "indent-rainbow",
+    "name": "frame-rainbow",
     "description": "Makes indentation easier to read",
-    "version": "8.3.1",
-    "publisher": "oderwat",
+    "version": "0.0.2",
+    "publisher": "firejump",
     "author": {
-        "name": "Hans Raaf"
+        "name": "Bartosz Janiak"
     },
     "icon": "assets/icon.png",
     "license": "MIT",
@@ -22,7 +22,7 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
     "contributes": {
         "configuration": {
@@ -79,10 +79,10 @@
                 "indentRainbow.colors": {
                     "type": "array",
                     "default": [
-                        "rgba(255,255,64,0.07)",
-                        "rgba(127,255,127,0.07)",
-                        "rgba(255,127,255,0.07)",
-                        "rgba(79,236,236,0.07)"
+                        "rgba(255,0,0,0.15)",
+                        "rgba(0,255,0,0.15)",
+                        "rgba(0,0,255,0.15)",
+                        "rgba(127,127,127,0.15)"
                     ],
                     "description": "An array with color (hex, rgba, rgb) strings which are used as colors, can be any length."
                 },
