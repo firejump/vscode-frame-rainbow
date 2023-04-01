@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
 
-interface Config {
+export interface Config {
     colors : string[];
-    errorColor : string;
-    tabmixColor : string;
     ignoreLinePatterns : string[];
     ignoreErrorLanguages : string[];
     includedLanguages : string[];
     excludedLanguages : string[];
-};
+    updateDelayMs : number;
+}
 
 export function getConfig() : Config {
     const userConfig = vscode.workspace.getConfiguration('indentRainbow');
@@ -19,11 +18,10 @@ export function getConfig() : Config {
           "rgba(0,0,255,0.15)",
           "rgba(127,127,127,0.15)"
         ],
-        errorColor : userConfig['errorColor'] || "rgba(128,32,32,0.3)",
-        tabmixColor : userConfig['tabmixColor'],
         ignoreLinePatterns: userConfig['ignoreLinePatterns'] || [],
         ignoreErrorLanguages: userConfig['ignoreErrorLanguages'] || [],
         includedLanguages: userConfig['includedLanguages'] || [],
         excludedLanguages: userConfig['excludedLanguages'] || [],
+        updateDelayMs: userConfig['updateDelay'] || 100,
     };
 }
