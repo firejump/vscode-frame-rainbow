@@ -162,7 +162,7 @@ class LanguagePropertiesCache {
 }
 
 class DecorationsBuilder {
-  outerFrame: vscode.DecorationOptions[][] ;
+  outerFrame: vscode.DecorationOptions[][];
   innerFrame: vscode.DecorationOptions[][];
   error: vscode.DecorationOptions[] = [];
   tabmix: vscode.DecorationOptions[] = [];
@@ -197,6 +197,7 @@ class LineDecorationContext {
   private line: vscode.TextLine;
   private whitespaceMatch: string;
   private skipErrors: boolean;
+  private tabSize: number;
 
   constructor(
     builder: DecorationsBuilder,
@@ -216,6 +217,7 @@ class LineDecorationContext {
     this.matchEndPos = editor.document.positionAt(this.matchEndIndex);
     this.line = editor.document.lineAt(this.matchStartPos);
     this.skipErrors = skipAllErrors || ignoreErrorsOnLines.has(this.line.lineNumber);
+    this.tabSize = getTabSize(editor);
   }
 
   decorate = (): void => {
@@ -267,21 +269,19 @@ class LineDecorationContext {
   };
 
   private decorateError = (): boolean => {
-    const tabSize = getTabSize(this.editor);
-    const whitespaceLengthInSpaces = getWhitespaceLengthInSpaces(this.whitespaceMatch, tabSize);
+    const whitespaceLengthInSpaces = getWhitespaceLengthInSpaces(this.whitespaceMatch, this.tabSize);
 
     let errorsFound = false;
-    if (whitespaceLengthInSpaces % tabSize !== 0) {
+    if (whitespaceLengthInSpaces % this.tabSize !== 0) {
       this.builder.error.push({
         range: new vscode.Range(this.matchStartPos, this.matchEndPos),
-        hoverMessage: `Unexpected indent length: ${whitespaceLengthInSpaces} is not divisible by tab size (${tabSize})`});
+        hoverMessage: `Unexpected indent length: ${whitespaceLengthInSpaces} is not divisible by tab size (${this.tabSize})`});
       errorsFound = true;
     }
     return errorsFound;
   };
 
   private decorateOuterFrames = () => {
-    const tabSize = getTabSize(this.editor);
     let tabDepth = 0;
     let nextCharIndex = 0;
     while (nextCharIndex < this.whitespaceMatch.length) {
@@ -289,7 +289,7 @@ class LineDecorationContext {
       if (this.whitespaceMatch[nextCharIndex] === "\t") {
         nextCharIndex++;
       } else {
-        nextCharIndex = Math.min(nextCharIndex + tabSize, this.whitespaceMatch.length);
+        nextCharIndex = Math.min(nextCharIndex + this.tabSize, this.whitespaceMatch.length);
       }
       if (tabDepth == 0) {
         // Skip decorating outermost frame, this leaves the background editor color intact.
@@ -306,8 +306,7 @@ class LineDecorationContext {
   };
 
   private decorateInnerFrame = () => {
-    const tabSize = getTabSize(this.editor);
-    const tabDepth = Math.floor(getWhitespaceLengthInSpaces(this.whitespaceMatch, tabSize) / tabSize);
+    const tabDepth = Math.floor(getWhitespaceLengthInSpaces(this.whitespaceMatch, this.tabSize) / this.tabSize);
     if (tabDepth == 0) {
       // Zero tab depth frame gets no decoration, only default editor background.
       return;
@@ -317,26 +316,25 @@ class LineDecorationContext {
     if (endlineIndex === -1) {
       endlineIndex = this.text.length;
     }
-    if (this.matchEndIndex < endlineIndex) {
-      const startPos = this.editor.document.positionAt(this.matchEndIndex);
-      const endPos = this.editor.document.positionAt(endlineIndex);
-      const endOfLineDecorationLength = this.longestLineLength - this.line.text.length;
-      const decoratorIndex = (tabDepth - 1) % this.builder.innerFrame.length;
-      const decoration : vscode.DecorationOptions = {
-        range: new vscode.Range(startPos, endPos),
-        renderOptions: {
-          after: {
-            width: endOfLineDecorationLength + "ch"
-          }
+    const startPos = this.editor.document.positionAt(this.matchEndIndex);
+    const endPos = this.editor.document.positionAt(endlineIndex);
+    const endOfLineDecorationLength = this.longestLineLength - this.line.text.length;
+    const decoratorIndex = (tabDepth - 1) % this.builder.innerFrame.length;
+    const decoration : vscode.DecorationOptions = {
+      range: new vscode.Range(startPos, endPos),
+      renderOptions: {
+        after: {
+          width: endOfLineDecorationLength + "ch"
         }
-      };
-      this.builder.innerFrame[decoratorIndex].push(decoration);
-    }
+      }
+    };
+    this.builder.innerFrame[decoratorIndex].push(decoration);
   };
 }
 
 class FrameRainbow {
   private config: Config;
+
   private languagePropertiesCache: LanguagePropertiesCache;
   private decorationTypes: DecorationTypes;
   private activeEditor: vscode.TextEditor | null | undefined;
@@ -377,7 +375,6 @@ class FrameRainbow {
   };
 
   private clearDecorations(editor: vscode.TextEditor) {
-    const emptyDecorationOptions: vscode.DecorationOptions[] = [];
     const allDecorationTypes: vscode.TextEditorDecorationType[] = [
       ...this.decorationTypes.outerFrame,
       ...this.decorationTypes.innerFrame,
@@ -385,7 +382,7 @@ class FrameRainbow {
       this.decorationTypes.tabmix
     ];
     for (const decorationType of allDecorationTypes) {
-      editor.setDecorations(decorationType, emptyDecorationOptions);
+      editor.setDecorations(decorationType, []);
     }
     this.dirtyDecorations = false;
   }
