@@ -318,17 +318,33 @@ class LineDecorationContext {
     }
     const startPos = this.editor.document.positionAt(this.matchEndIndex);
     const endPos = this.editor.document.positionAt(endlineIndex);
-    const endOfLineDecorationLength = this.longestLineLength - this.line.text.length;
-    const decoratorIndex = (tabDepth - 1) % this.builder.innerFrame.length;
-    const decoration : vscode.DecorationOptions = {
+
+    const textDecoration : vscode.DecorationOptions = {
       range: new vscode.Range(startPos, endPos),
-      renderOptions: {
-        after: {
-          width: endOfLineDecorationLength + "ch"
-        }
-      }
     };
-    this.builder.innerFrame[decoratorIndex].push(decoration);
+    const decoratorIndex = (tabDepth - 1) % this.builder.innerFrame.length;
+    this.builder.innerFrame[decoratorIndex].push(textDecoration);
+
+    if (endlineIndex !== this.text.length) {
+      // We're attaching end of line decoration separately to the newline, rather than
+      // to the last character of the line. This is done to ensure compatibility with
+      // extensions like Copilot or Tabnine, which attach their text decorations to
+      // the last character of the line; we need to ensure that frame decoration is
+      // displayed afterwards.
+      // TODO: It would be cool if we could decrease decoration of length accordingly,
+      // but there doesn't seem to be any API to determine the length of text in
+      // decorations added by different extensions.
+      const endOfLineDecorationLength = this.longestLineLength - this.line.text.length;
+      const endOfLineDecoration : vscode.DecorationOptions = {
+        range: new vscode.Range(endPos, endPos.translate(0, 1)),
+        renderOptions: {
+          after: {
+            width: endOfLineDecorationLength + "ch"
+          }
+        }
+      };
+      this.builder.innerFrame[decoratorIndex].push(endOfLineDecoration);
+    }
   };
 }
 
