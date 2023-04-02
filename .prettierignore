@@ -1,8 +1,7 @@
 out
+tsout
 dist
 node_modules
-*.vsix
+tests/
 .vscode-test-web
 .vscode-test
-.husky
-tsout

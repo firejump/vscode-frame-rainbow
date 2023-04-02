@@ -1,5 +1,5 @@
 #!/bin/bash
 
-rm -f indent-rainbow-*.vsix
+rm -f frame-indent-rainbow-*.vsix
 rm -rf out
 npm install && vsce package && vsce publish
