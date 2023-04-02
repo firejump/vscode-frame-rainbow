@@ -23,10 +23,10 @@ situations.
 Although you can use it as it is, there is the possibility to configure some aspects of the extension:
 
 ```js
-  // For which languages indent-rainbow should be activated (if empty it means all).
+  // For which languages frame-indent-rainbow should be activated (if empty it means all).
   "frameIndentRainbow.includedLanguages": [] // for example ["nim", "nims", "python"]
 
-  // For which languages indent-rainbow should be deactivated (if empty it means none).
+  // For which languages frame-indent-rainbow should be deactivated (if empty it means none).
   "frameIndentRainbow.excludedLanguages": ["plaintext"]
 
   // The delay in ms until the editor gets updated.
