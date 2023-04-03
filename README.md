@@ -3,12 +3,15 @@
 ## A simple extension to make indentation more readable
 
 This extension colorizes the frames around indented text, alternating different
-colors on each step. It is a reworked version of [oderwat](https://github.com/oderwat)'s
-[indent-rainbow](https://marketplace.visualstudio.com/items?itemName=oderwat.indent-rainbow).
+colors on each step. Some people with dyslexia say it helps them get around
+unfamiliar code.
 
 Works both with standalone Visual Studio Code as well as vscode-web
-(github.dev). Get it here:
-[Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=firejump.frame-indent-rainbow)
+(github.dev). Get it on
+[Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=firejump.frame-indent-rainbow).
+
+This extension is a reworked version of [oderwat](https://github.com/oderwat)'s
+[indent-rainbow](https://marketplace.visualstudio.com/items?itemName=oderwat.indent-rainbow).
 
 ![Example](https://github.com/firejump/vscode-frame-rainbow/blob/master/assets/example.png?raw=true)
 
