@@ -19,12 +19,12 @@ situations.
 
 ## Configuration
 
-Although you can use it as it is, there is a possibility to configure some aspects of the extension.
-You can add the following setting overrides to your local `settings.json` file.
-The simplest way to do this is via extension settings:
+Although you can use it as it is, there is a possibility to configure some aspects of the extension. The simplest way to do this is via extension settings:
 
 ![Settings](https://github.com/firejump/vscode-frame-rainbow/blob/master/assets/extension_settings_1.png?raw=true)
 ![Settings](https://github.com/firejump/vscode-frame-rainbow/blob/master/assets/extension_settings_2.png?raw=true)
+
+You can add the following setting overrides to your local `settings.json` file:
 
 ```js
   // For which languages frame-indent-rainbow should be activated (if empty it means all).
