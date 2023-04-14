@@ -108,6 +108,18 @@ function getLinesMatchingRegExps(
   return set;
 }
 
+function positionInRanges(
+  position: vscode.Position,
+  ranges: readonly vscode.Range[]
+): boolean {
+  for (const range of ranges) {
+    if (range.contains(position)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 type LanguageProperties = {
   skipAllErrors: boolean;
   shouldDecorate: boolean;
@@ -420,7 +432,7 @@ class FrameRainbow {
     }
   };
 
-  private clearDecorations(editor: vscode.TextEditor) {
+  private clearDecorations = (editor: vscode.TextEditor) => {
     const allDecorationTypes: vscode.TextEditorDecorationType[] = [
       ...this.decorationTypes.outerFrame,
       ...this.decorationTypes.innerFrame,
@@ -431,11 +443,10 @@ class FrameRainbow {
       editor.setDecorations(decorationType, []);
     }
     this.dirtyDecorations = false;
-  }
+  };
 
   private updateDecorations =
     (editor: vscode.TextEditor, skipAllErrors: boolean) => () => {
-      // TODO: decorate only visible ranges
       const initialWhitespaceRegExp = /^[\t ]+/gm;
       const text = editor.document.getText();
       const longestLineLength = getLongestLineLength(editor.document);
@@ -450,6 +461,10 @@ class FrameRainbow {
 
       let matchArray;
       while ((matchArray = initialWhitespaceRegExp.exec(text))) {
+        const matchPosition = editor.document.positionAt(matchArray.index);
+        if (!positionInRanges(matchPosition, editor.visibleRanges)) {
+          continue;
+        }
         const context = new LineDecorationContext(
           builder,
           text,
@@ -491,6 +506,19 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions
   );
 
+  vscode.window.onDidChangeTextEditorVisibleRanges(
+    (event) => {
+      if (event.textEditor === vscode.window.activeTextEditor) {
+        frameRainbow.maybeUpdateDecorations();
+      }
+    },
+    null,
+    context.subscriptions
+  );
+
+  //TODO detect changes to tabsize, tab vs spaces indentation setting.
+  //TODO update not only on active editor, as scroll can change on not active,
+  //or contents can be changed outside of active editor.
   /**
    * Listen for configuration change in indentRainbow section
    * When anything changes in the section, show a prompt to reload
