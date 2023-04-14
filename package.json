@@ -1,7 +1,7 @@
 {
   "name": "frame-indent-rainbow",
   "description": "Makes indentation easier to read by coloring frames around each indent level (block). Helpful for people with dyslexia.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "firejump",
   "author": {
     "name": "Bartosz Janiak"
@@ -9,7 +9,7 @@
   "icon": "assets/icon.png",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.52.0"
+    "vscode": "^1.63.0"
   },
   "repository": {
     "url": "https://github.com/firejump/vscode-frame-rainbow.git",
