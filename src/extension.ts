@@ -345,8 +345,9 @@ class LineDecorationContext {
     const textDecoration: vscode.DecorationOptions = {
       range: new vscode.Range(startPos, endPos),
     };
-    const decoratorIndex = (tabDepth - 1) % this.builder.innerFrame.length;
-    this.builder.innerFrame[decoratorIndex].push(textDecoration);
+    // TODO rename
+    const decoratorIndex = (tabDepth - 1) % this.builder.outerFrame.length;
+    this.builder.outerFrame[decoratorIndex].push(textDecoration);
 
     if (endlineIndex !== this.text.length) {
       // We're attaching end of line decoration separately to the newline, rather than
