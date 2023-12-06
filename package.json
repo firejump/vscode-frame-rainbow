@@ -1,7 +1,7 @@
 {
   "name": "frame-indent-rainbow",
   "description": "Makes indentation easier to read by coloring frames around each indent level (block). Helpful for people with dyslexia.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "firejump",
   "author": {
     "name": "Bartosz Janiak"
